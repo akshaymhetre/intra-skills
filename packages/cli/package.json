@@ -1,0 +1,24 @@
+{
+  "name": "@intra-skills/cli",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "intra": "./dist/bin.js"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json && chmod +x dist/bin.js && node scripts/bundle.mjs",
+    "typecheck": "tsc -p tsconfig.test.json",
+    "test": "vitest run",
+    "bundle": "node scripts/bundle.mjs"
+  },
+  "dependencies": {
+    "@intra-skills/shared": "workspace:*"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

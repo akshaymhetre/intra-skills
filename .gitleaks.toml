@@ -1,0 +1,8 @@
+# The secret scanner's own tests and the git-connector tests use fake credentials on purpose
+# (AWS's documented example key shape, placeholder GitHub tokens, a fixed webhook secret).
+[extend]
+useDefault = true
+
+[allowlist]
+description = "fake credentials in tests"
+paths = ['''\.test\.ts$''', '''^scripts/e2e\.sh$''']

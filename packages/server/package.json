@@ -1,0 +1,19 @@
+{
+  "name": "@intra-skills/server",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "bin": { "intra-skills-server": "./dist/bin.js" },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "dev": "node --watch dist/bin.js serve"
+  },
+  "dependencies": {
+    "@intra-skills/shared": "workspace:*",
+    "@hono/node-server": "^2.1.5",
+    "diff": "^9.0.0",
+    "hono": "^4.13.13"
+  }
+}

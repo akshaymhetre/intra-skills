@@ -1,0 +1,40 @@
+# One registry for your organization. Copy .env.example to .env and fill it in first.
+#
+#   docker compose --profile https up -d   # with Caddy: HTTPS certificates fetched for you
+#   docker compose up -d                   # without: put your own proxy in front of port 7710
+#
+# Back up the intra-skills-data volume; it holds the database and the key for stored git credentials.
+services:
+  intra-skills:
+    image: intra-skills:latest
+    build: .
+    restart: unless-stopped
+    ports:
+      # Loopback only by default: reach it through Caddy or your own proxy, not over plain HTTP.
+      - "${INTRA_SKILLS_BIND:-127.0.0.1}:7710:7710"
+    environment:
+      INTRA_SKILLS_PUBLIC_URL: "${INTRA_SKILLS_PUBLIC_URL:?set INTRA_SKILLS_PUBLIC_URL in .env}"
+      INTRA_SKILLS_ORG_NAME: "${INTRA_SKILLS_ORG_NAME:-}"
+      INTRA_SKILLS_SECRET_KEY: "${INTRA_SKILLS_SECRET_KEY:-}"
+    volumes:
+      - intra-skills-data:/data
+
+  caddy:
+    profiles: ["https"]
+    image: caddy:2.10.2-alpine
+    restart: unless-stopped
+    depends_on: [intra-skills]
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      INTRA_SKILLS_DOMAIN: "${INTRA_SKILLS_DOMAIN:?set INTRA_SKILLS_DOMAIN in .env to use the https profile}"
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+
+volumes:
+  intra-skills-data:
+  caddy-data:
+  caddy-config:

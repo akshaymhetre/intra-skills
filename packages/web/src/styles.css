@@ -1,0 +1,611 @@
+@import "tailwindcss";
+
+/*
+  intra-skills tokens. Spec: design/DIRECTION.md (v2).
+
+  - Warm graphite neutrals (hue about 60): a terminal at night in dark, warm paper in light.
+  - Primary actions are filled in ink (the foreground colour), never in a hue.
+  - ONE signal colour, amber - the block cursor of the terminal where `intra install` runs.
+    It marks the current location, focus, `latest`, the beam on the install card and the underline
+    under one word per section heading. Nothing else uses it. (Source names keep the v1 `--sel`
+    prefix so every screen stays on-system; read `sel` as "signal".)
+  - Warning is a yellow-olive, kept apart from the amber signal; danger and success are their own hues.
+
+  Light and dark are designed separately, not inverted. Source names here (--ground, --ink...) differ
+  from the Tailwind theme names (--color-bg, --color-fg...) on purpose: `--color-x: var(--color-x)`
+  would be circular and silently drop the utility.
+*/
+
+:root {
+  color-scheme: light;
+  /* surfaces */
+  --ground: #fffcfa;
+  --panel: #fbf6f0;
+  --raised: #ffffff;
+  --subtle: #f5efe9;
+  --tint: #ede7e0;
+  /* lines */
+  --hair: #e8e1da;
+  --hair-strong: #d6cec6;
+  --hair-control: #8f8881;
+  /* ink */
+  --ink: #26221e;
+  --ink-2: #4d4741;
+  --ink-3: #6a635c;
+  /* primary = ink */
+  --primary: #26221e;
+  --primary-hover: #3b3631;
+  --on-primary: #fffcfa;
+  /* signal amber (the terminal cursor) */
+  --sel: #b06c08;
+  --sel-fill: #f2a23a;
+  --on-sel: #1a1209;
+  --sel-text: #85520a;
+  --sel-soft: #fdf0de;
+  --sel-line: #ecc089;
+  --focus: #85520a;
+  /* danger */
+  --danger: #b4321f;
+  --danger-hover: #9c2a19;
+  --on-danger: #fffaf8;
+  --danger-text: #a8301e;
+  --danger-soft: #fdf1ee;
+  --danger-line: #f0c2b9;
+  /* warning: yellow-olive, kept apart from the amber signal */
+  --warning-text: #66590a;
+  --warning-soft: #f8f4d8;
+  --warning-line: #ddd08a;
+  /* success: verified, active, copied */
+  --ok-text: #2c6b45;
+  --ok-soft: #e9f5ed;
+  --ok-line: #b7dcc4;
+  /* diff */
+  --diff-add: #e9f5ed;
+  --diff-add-strong: #c6e6d1;
+  --diff-del: #fcefec;
+  --diff-del-strong: #f5cfc7;
+  /* floating layers only */
+  --shadow-float: 0 1px 2px rgb(38 34 30 / 0.06), 0 14px 36px -10px rgb(38 34 30 / 0.22);
+  --scrim: rgb(38 34 30 / 0.34);
+  --skeleton: #efe8e1;
+  /* effects: the beam and the spotlight glow */
+  --beam: #e8920f;
+  --glow: rgb(242 162 58 / 0.14);
+  --dot: #cfc6bd;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --ground: #15120f;
+    --panel: #110f0c;
+    --raised: #1c1915;
+    --subtle: #231f1b;
+    --tint: #2c2823;
+    --hair: #2b2723;
+    --hair-strong: #3b3631;
+    --hair-control: #6b655e;
+    --ink: #f2eee9;
+    --ink-2: #c9c2bb;
+    --ink-3: #a8a199;
+    --primary: #f2eee9;
+    --primary-hover: #ffffff;
+    --on-primary: #15120f;
+    --sel: #f2a23a;
+    --sel-fill: #f2a23a;
+    --on-sel: #1a1209;
+    --sel-text: #f5b35f;
+    --sel-soft: #2c200f;
+    --sel-line: #6e470e;
+    --focus: #f2a23a;
+    --danger: #c9402b;
+    --danger-hover: #b33724;
+    --on-danger: #fffaf8;
+    --danger-text: #f19a89;
+    --danger-soft: #2e1813;
+    --danger-line: #6b2c21;
+    --warning-text: #e0cf6e;
+    --warning-soft: #26230f;
+    --warning-line: #5b5320;
+    --ok-text: #7fd09d;
+    --ok-soft: #13261a;
+    --ok-line: #285c3b;
+    --diff-add: #13261a;
+    --diff-add-strong: #1d3a27;
+    --diff-del: #2a1612;
+    --diff-del-strong: #42221b;
+    --shadow-float: 0 0 0 1px rgb(255 245 235 / 0.06), 0 18px 44px -10px rgb(0 0 0 / 0.65);
+    --scrim: rgb(8 6 4 / 0.64);
+    --skeleton: #26221e;
+    --beam: #f7a224;
+    --glow: rgb(247 162 36 / 0.10);
+    --dot: #3d3833;
+  }
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --ground: #15120f;
+  --panel: #110f0c;
+  --raised: #1c1915;
+  --subtle: #231f1b;
+  --tint: #2c2823;
+  --hair: #2b2723;
+  --hair-strong: #3b3631;
+  --hair-control: #6b655e;
+  --ink: #f2eee9;
+  --ink-2: #c9c2bb;
+  --ink-3: #a8a199;
+  --primary: #f2eee9;
+  --primary-hover: #ffffff;
+  --on-primary: #15120f;
+  --sel: #f2a23a;
+  --sel-fill: #f2a23a;
+  --on-sel: #1a1209;
+  --sel-text: #f5b35f;
+  --sel-soft: #2c200f;
+  --sel-line: #6e470e;
+  --focus: #f2a23a;
+  --danger: #c9402b;
+  --danger-hover: #b33724;
+  --on-danger: #fffaf8;
+  --danger-text: #f19a89;
+  --danger-soft: #2e1813;
+  --danger-line: #6b2c21;
+  --warning-text: #e0cf6e;
+  --warning-soft: #26230f;
+  --warning-line: #5b5320;
+  --ok-text: #7fd09d;
+  --ok-soft: #13261a;
+  --ok-line: #285c3b;
+  --diff-add: #13261a;
+  --diff-add-strong: #1d3a27;
+  --diff-del: #2a1612;
+  --diff-del-strong: #42221b;
+  --shadow-float: 0 0 0 1px rgb(255 245 235 / 0.06), 0 18px 44px -10px rgb(0 0 0 / 0.65);
+  --scrim: rgb(8 6 4 / 0.64);
+  --skeleton: #26221e;
+  --beam: #f7a224;
+  --glow: rgb(247 162 36 / 0.10);
+  --dot: #3d3833;
+}
+
+@theme inline {
+  /* surfaces */
+  --color-bg: var(--ground);
+  --color-panel: var(--panel);
+  --color-surface: var(--raised);
+  --color-surface-2: var(--subtle);
+  --color-surface-3: var(--tint);
+  /* lines */
+  --color-line: var(--hair);
+  --color-line-strong: var(--hair-strong);
+  --color-line-control: var(--hair-control);
+  /* ink */
+  --color-fg: var(--ink);
+  --color-fg-muted: var(--ink-2);
+  --color-fg-subtle: var(--ink-3);
+  /* primary action (ink fill) */
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-on-primary: var(--on-primary);
+  /* the one signal hue */
+  --color-sel: var(--sel);
+  --color-sel-text: var(--sel-text);
+  --color-sel-soft: var(--sel-soft);
+  --color-sel-line: var(--sel-line);
+  --color-sel-fill: var(--sel-fill);
+  --color-on-sel: var(--on-sel);
+  --color-focus: var(--focus);
+  /* semantic */
+  --color-danger: var(--danger);
+  --color-danger-hover: var(--danger-hover);
+  --color-on-danger: var(--on-danger);
+  --color-danger-text: var(--danger-text);
+  --color-danger-soft: var(--danger-soft);
+  --color-danger-line: var(--danger-line);
+  --color-warning-text: var(--warning-text);
+  --color-warning-soft: var(--warning-soft);
+  --color-warning-line: var(--warning-line);
+  --color-ok-text: var(--ok-text);
+  --color-ok-soft: var(--ok-soft);
+  --color-ok-line: var(--ok-line);
+  --color-dot: var(--dot);
+  --color-diff-add: var(--diff-add);
+  --color-diff-add-strong: var(--diff-add-strong);
+  --color-diff-del: var(--diff-del);
+  --color-diff-del-strong: var(--diff-del-strong);
+  --shadow-float: var(--shadow-float);
+
+  /*
+    Legacy names kept so pages not yet restyled still render on-system.
+    New code uses the names above: brand -> primary / sel, bad -> danger, warn -> warning, ok -> ok-text.
+  */
+  --color-rail: var(--panel);
+  --color-brand: var(--primary);
+  --color-brand-hover: var(--primary-hover);
+  --color-brand-fg: var(--on-primary);
+  --color-brand-text: var(--sel-text);
+  --color-brand-soft: var(--sel-soft);
+  --color-brand-line: var(--sel-line);
+  --color-ring: var(--focus);
+  --color-ok: var(--ok-text);
+  --color-warn: var(--warning-text);
+  --color-warn-soft: var(--warning-soft);
+  --color-warn-line: var(--warning-line);
+  --color-bad: var(--danger-text);
+  --color-bad-soft: var(--danger-soft);
+  --color-bad-line: var(--danger-line);
+  --shadow-card: none;
+  --shadow-pop: var(--shadow-float);
+}
+
+@theme {
+  --font-sans: "Plus Jakarta Sans Variable", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  /* Fixed scale: 12 / 13 / 14 / 16 / 20 / 28. `2xs` is a legacy alias of 12 (nothing reads below 12). */
+  --text-2xs: 0.75rem;
+  --text-2xs--line-height: 1rem;
+  --text-xs: 0.75rem;
+  --text-xs--line-height: 1rem;
+  --text-sm: 0.8125rem;
+  --text-sm--line-height: 1.25rem;
+  --text-base: 0.875rem;
+  --text-base--line-height: 1.375rem;
+  --text-lg: 1rem;
+  --text-lg--line-height: 1.5rem;
+  --text-xl: 1.25rem;
+  --text-xl--line-height: 1.75rem;
+  --text-2xl: 1.75rem;
+  --text-2xl--line-height: 2.125rem;
+  /* Display steps, only for the home and get-started heroes and section headings. */
+  --text-3xl: 2.25rem;
+  --text-3xl--line-height: 2.5rem;
+  --text-4xl: 3.25rem;
+  --text-4xl--line-height: 3.375rem;
+
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+
+  --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+@layer base {
+  :root {
+    accent-color: var(--sel);
+    scrollbar-color: var(--hair-strong) transparent;
+  }
+  html {
+    -webkit-text-size-adjust: 100%;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scrollbar-gutter: stable;
+  }
+  body {
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-size: var(--text-base);
+    line-height: var(--text-base--line-height);
+  }
+  input,
+  textarea {
+    caret-color: var(--sel);
+  }
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+  p {
+    text-wrap: pretty;
+  }
+  /* Tailwind v4 preflight sets buttons to cursor:default; every enabled control here is clickable. */
+  button:not(:disabled),
+  [role="button"],
+  [role="option"],
+  [role="menuitem"],
+  a[href],
+  select,
+  summary,
+  label[for] {
+    cursor: pointer;
+  }
+  button:disabled,
+  [aria-disabled="true"] {
+    cursor: not-allowed;
+  }
+  :focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+  }
+  ::selection {
+    background: color-mix(in oklch, var(--sel) 32%, transparent);
+    color: inherit;
+  }
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--hair-strong);
+    border: 3px solid transparent;
+    background-clip: padding-box;
+    border-radius: 999px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  code,
+  kbd,
+  samp,
+  pre {
+    font-family: var(--font-mono);
+  }
+}
+
+@utility tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+@utility mono-id {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums slashed-zero;
+  letter-spacing: -0.01em;
+}
+
+/* Rendered SKILL.md body. Hand-tuned rather than a typography plugin, to keep it dense and on-palette. */
+.prose-skill {
+  color: var(--ink);
+  font-size: 0.875rem;
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+}
+.prose-skill > * + * {
+  margin-top: 0.85em;
+}
+.prose-skill h1,
+.prose-skill h2,
+.prose-skill h3,
+.prose-skill h4 {
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  line-height: 1.3;
+  margin-top: 1.6em;
+}
+.prose-skill h1 { font-size: 1.25rem; }
+.prose-skill h2 { font-size: 1rem; padding-bottom: 0.35em; border-bottom: 1px solid var(--hair); }
+.prose-skill h3 { font-size: 0.875rem; }
+.prose-skill h4 { font-size: 0.875rem; color: var(--ink-2); }
+.prose-skill > :first-child { margin-top: 0; }
+.prose-skill a { color: var(--ink); text-decoration: underline; text-decoration-color: var(--hair-control); text-underline-offset: 0.18em; }
+.prose-skill a:hover { text-decoration-color: currentColor; }
+.prose-skill ul { list-style: disc; padding-left: 1.25em; }
+.prose-skill ol { list-style: decimal; padding-left: 1.4em; }
+.prose-skill li + li { margin-top: 0.3em; }
+.prose-skill li::marker { color: var(--ink-3); }
+.prose-skill code {
+  font-family: var(--font-mono);
+  font-size: 0.86em;
+  background: var(--subtle);
+  border: 1px solid var(--hair);
+  border-radius: 3px;
+  padding: 0.05em 0.3em;
+}
+.prose-skill pre {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  background: var(--panel);
+  border: 1px solid var(--hair);
+  border-radius: 5px;
+  padding: 0.85em 1em;
+  overflow-x: auto;
+}
+.prose-skill pre code { background: none; border: 0; padding: 0; font-size: inherit; }
+.prose-skill blockquote {
+  border-left: 2px solid var(--hair-strong);
+  padding-left: 0.9em;
+  color: var(--ink-2);
+}
+.prose-skill table { width: 100%; border-collapse: collapse; font-size: 0.8125rem; display: block; overflow-x: auto; }
+.prose-skill th, .prose-skill td { border: 1px solid var(--hair); padding: 0.4em 0.7em; text-align: left; overflow-wrap: normal; min-width: 6rem; }
+.prose-skill th { background: var(--panel); font-weight: 600; }
+.prose-skill hr { border: 0; border-top: 1px solid var(--hair); }
+
+@keyframes isk-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+.skeleton {
+  background: var(--skeleton);
+  border-radius: 3px;
+  animation: isk-pulse 1.6s ease-in-out infinite;
+}
+
+/* Floating layers (palette, menus, dialogs, sheets): fade and lift 4px in 160ms. */
+@keyframes isk-lift {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes isk-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes isk-sheet {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: none; }
+}
+.float-in { animation: isk-lift 160ms var(--ease-out); }
+.fade-in { animation: isk-fade 160ms var(--ease-out); }
+.sheet-in { animation: isk-sheet 200ms var(--ease-out); }
+
+/* The authored moment: the `$` prompt of an install line turns into a check for 1.5s. */
+@keyframes isk-prompt-swap {
+  from { opacity: 0; transform: scale(0.6); }
+  to { opacity: 1; transform: none; }
+}
+.prompt-swap { animation: isk-prompt-swap 180ms var(--ease-out); }
+
+dialog::backdrop {
+  background: var(--scrim);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton { animation: none; }
+  .float-in, .sheet-in { animation: isk-fade 120ms linear; }
+  .prompt-swap { animation: none; }
+  *, *::before, *::after { transition-duration: 0.01ms !important; }
+}
+
+/* ---------- v2 effects. Each has exactly one job; see design/DIRECTION.md "Motion budget". ---------- */
+
+/* Display type: tight tracking at 28px and above. */
+@utility display {
+  letter-spacing: -0.032em;
+  font-weight: 650;
+}
+
+/*
+  `.mark-word` used to underline one word per heading in amber; two blind critiques read it as a
+  link, so it is now a no-op hook. The amber mark of a heading is the still block cursor instead
+  (`.cursor-still`), and only on the two hero titles (Home, Get started).
+*/
+.mark-word {
+  white-space: nowrap;
+}
+.cursor-still {
+  display: inline-block;
+  width: 0.42em;
+  height: 0.78em;
+  margin-left: 0.12em;
+  vertical-align: -0.04em;
+  background: var(--sel-fill);
+  border-radius: 1px;
+}
+
+/* Dotted hairline between page sections. */
+.rule-dots {
+  height: 1px;
+  background-image: radial-gradient(circle, var(--dot) 1px, transparent 1.2px);
+  background-size: 6px 1px;
+  background-repeat: repeat-x;
+}
+
+/* The wordmark cursor: blinks twice on load (done in 1.6s), then holds steady. */
+@keyframes isk-blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+.cursor-block {
+  display: inline-block;
+  width: 0.55em;
+  height: 1.05em;
+  vertical-align: -0.16em;
+  background: var(--sel-fill);
+  border-radius: 1px;
+  animation: isk-blink 0.8s steps(1) 2;
+}
+
+/*
+  Border beam: a short amber arc travels the border of the ONE primary surface on a page
+  (the install card, the open command palette). Built on a registered angle so it animates
+  without JS; the mask leaves only a 1px ring.
+*/
+@property --beam-angle {
+  syntax: "<angle>";
+  /* The first frame puts the bright head on the top-right edge, where a still screenshot reads it as a beam. */
+  initial-value: 60deg;
+  inherits: false;
+}
+@keyframes isk-beam {
+  to { --beam-angle: 360deg; }
+}
+.beam {
+  position: relative;
+  isolation: isolate;
+  /* A faint amber ring holds still under the travelling arc, so a still frame reads as intended. */
+  border-color: color-mix(in oklab, var(--beam) 24%, var(--hair-strong));
+}
+.beam::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: conic-gradient(
+    from var(--beam-angle),
+    transparent 0deg,
+    transparent 210deg,
+    color-mix(in oklab, var(--beam) 25%, transparent) 290deg,
+    color-mix(in oklab, var(--beam) 70%, transparent) 335deg,
+    var(--beam) 356deg,
+    transparent 360deg
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  animation: isk-beam 5.5s linear infinite;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Spotlight: a soft glow follows the pointer across a tile (team and stack tiles only). */
+.spotlight {
+  position: relative;
+  isolation: isolate;
+}
+.spotlight::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(260px circle at var(--mx, 50%) var(--my, 50%), var(--glow), transparent 70%);
+  opacity: 0;
+  transition: opacity 200ms var(--ease-out);
+  pointer-events: none;
+  z-index: -1;
+}
+@media (hover: hover) {
+  .spotlight:hover::after {
+    opacity: 1;
+  }
+}
+
+/* Lift for tiles and rows on hover: 2px, 160ms, never on touch. */
+@media (hover: hover) {
+  .lift {
+    transition: transform 160ms var(--ease-out), border-color 120ms var(--ease-out), background-color 120ms var(--ease-out);
+  }
+  .lift:hover {
+    transform: translateY(-2px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cursor-block { animation: none; }
+  .beam::before {
+    animation: none;
+    background: color-mix(in oklab, var(--beam) 55%, transparent);
+  }
+  .lift:hover { transform: none; }
+}
+
+/* Person and team marks: per-person tones from fx.tsx, swapped per theme. */
+.person-mark {
+  background: var(--pm-bg);
+  color: var(--pm-fg);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .person-mark {
+    background: var(--pm-bg-d);
+    color: var(--pm-fg-d);
+  }
+}
+:root[data-theme="dark"] .person-mark {
+  background: var(--pm-bg-d);
+  color: var(--pm-fg-d);
+}

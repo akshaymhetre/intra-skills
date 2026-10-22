@@ -1,0 +1,6 @@
+# Caddy terminates HTTPS and fetches the certificate for INTRA_SKILLS_DOMAIN from Let's Encrypt.
+# The domain's DNS must point at this machine, and ports 80 and 443 must be reachable.
+{$INTRA_SKILLS_DOMAIN} {
+	encode zstd gzip
+	reverse_proxy intra-skills:7710
+}

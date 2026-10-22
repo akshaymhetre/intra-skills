@@ -1,0 +1,9 @@
+**/node_modules
+**/dist
+**/dist-bundle
+.data
+.git
+**/.ui-audit
+packages/web/screenshots
+.env
+backups

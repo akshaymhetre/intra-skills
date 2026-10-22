@@ -1,0 +1,9 @@
+node_modules/
+dist/
+*.tsbuildinfo
+.data/
+coverage/
+.DS_Store
+packages/web/screenshots/
+.env
+backups/

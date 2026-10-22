@@ -1,0 +1,19 @@
+{
+  "name": "intra-skills",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@11.18.0",
+  "engines": { "node": ">=24" },
+  "scripts": {
+    "build": "pnpm -r run build",
+    "typecheck": "pnpm --filter @intra-skills/shared run build && pnpm -r run typecheck",
+    "test": "pnpm -r run test",
+    "demo": "pnpm -r run build && scripts/dev/up.sh",
+    "check": "pnpm -r run build && pnpm -r run typecheck && pnpm -r run test"
+  },
+  "devDependencies": {
+    "typescript": "~5.9.3",
+    "@types/node": "^24.0.0",
+    "vitest": "^4.0.5"
+  }
+}
